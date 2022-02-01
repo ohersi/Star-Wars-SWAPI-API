@@ -5,6 +5,8 @@ const SwApi = () => {
 
     const [shipData, setShipData] = useState([])
 
+    const shipImages = [{ image: 'https://external-preview.redd.it/woVb5Pix_gsE9t5yhYW49LlYHc1tuifsMiGxSuLdME0.jpg?auto=webp&s=4dcf70663c52919125f6438436b3da54aa9748a7' }, { image: 'https://lumiere-a.akamaihd.net/v1/images/Star-Destroyer_ab6b94bb.jpeg?region=0%2C50%2C1600%2C800' }]
+
     const fetchShip = async () => {
         try {
             const res = await axios.all([
@@ -14,14 +16,24 @@ const SwApi = () => {
                 axios.get('https://swapi.dev/api/starships/?page=4')
             ]);
             const ships = res.map((res) => res.data.results)
-            setShipData(ships.flat())
+            const imgShips = ships.flat()
 
-        } catch (error) { console.error(error) }
+            const newArr = imgShips.map((obj, index) => (
+                { ...obj, shipImages: shipImages[index] }))
+            setShipData(newArr)
+        } catch (error) {
+            console.error(error)
+        }
     }
 
     useEffect(() => {
         fetchShip()
     }, [])
+
+    // shipData.map((obj) => {
+    //     Object.assign(obj, img)
+    // })
+    console.log(shipData)
 
     return (
         <>
@@ -33,6 +45,8 @@ const SwApi = () => {
                     shipData.map((ship) => {
                         return (
                             <div className='cards' key={ship.name}>
+
+                                <img src={ship.shipImages?.image} alt="" />
                                 <h1 id='names'>{ship.name}</h1>
                                 <h3 className='txt'>
                                     <span>Model</span>
@@ -45,13 +59,11 @@ const SwApi = () => {
                                 <p>Passengers: {ship.passengers}</p>
 
                             </div>
-
                         )
                     })
                 }
             </div>
         </>
-
     );
 }
 
